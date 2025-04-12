@@ -70,7 +70,7 @@ app.post("/login", async (req, res) => {
         //Vérifie si l'utilisateur existe
         const user = await User.findOne({email});
         if (!user) {
-            return res.status(401).json({ message: "Cette utilisateur n'éxiste pas" });
+            return res.status(401).json({ message: "Cette utilisateur n'existe pas" });
         }
 
         //Vérifie le mdp
@@ -125,6 +125,11 @@ app.post("/geocaches", function (req, res) {
     res.status(201).json(geocache)
 })
 
+//Accés à l'app
+app.get("/", (req, res) => {
+    res.send("Bienvenue sur le serveur Geocaching !");
+});
+
 // 2. Récupérer tous les géocaches (GET /geocaches)
 // à améliorer : ajouter un filtre par localisation et distance
 
@@ -164,6 +169,6 @@ app.delete("/geocaches/:id", function (req, res) {
 })
 
 // lance le serveur
-app.listen(3000, () => {
-    console.log("En attente de requêtes...")
-})
+app.listen(3000, '0.0.0.0', () => {
+    console.log("En attente de requêtes...");
+});
