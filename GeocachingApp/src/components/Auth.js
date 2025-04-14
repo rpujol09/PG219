@@ -7,10 +7,11 @@ const Auth = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   //alterner entre connexion et inscription
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false); // Gérer la visibilité du mot de passe
 
   const login = async () => {
     //url en fonction de connexion ou inscription
-    const url = isLogin ? 'http://127.0.0.1:3000/login' : 'http://127.0.0.1:3000/register';
+    const url = isLogin ? 'http://192.168.57.59:3000/login' : 'http://192.168.57.59:3000/register';
     // les utilisiateurs doivent remplir tous les champs
     if (!email || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
@@ -20,10 +21,15 @@ const Auth = ({ onLogin }) => {
     try {
       const response = await axios.post(url , { email, password });
       if (response.status === 200) {
-        Alert.alert(isLogin ? 'Connexion réussie' : 'Inscription réussie');
+        //Alert.alert(isLogin ? 'Connexion réussie ' : 'Inscription réussie');
+
+        
         //si l'utilisateur se connecte, on lui renvoie le token
         if (isLogin) {
+          Alert.alert('Connexion réussie');
           onLogin(response.data.token, email);
+        } else {
+          Alert.alert('Inscription réussie', 'Vous pouvez maintenant vous connecter');
         }
       }
     } catch (error) {
@@ -61,9 +67,16 @@ const Auth = ({ onLogin }) => {
         placeholder="Mot de passe"
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry= {!showPassword} // Afficher ou masquer le mot de passe
       />
-      <Button title={isLogin ? "Se connecter" :"S'inscire"} onPress={login} />
+      <Button
+        title={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+        onPress={() => setShowPassword(!showPassword)} // Changer la visibilité du mot de passe
+      />
+
+
+      
+      <Button title={isLogin ? "Se connecter" :"S'inscrire"} onPress={login} />
       <Button 
         title={isLogin ? "Pas encore de compte ? Inscrivez-vous" : "Déjà un compte ? Connectez-vous"}
         onPress={() => setIsLogin(!isLogin)}

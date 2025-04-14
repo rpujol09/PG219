@@ -8,10 +8,9 @@ const App = () => {
   const [token, setToken] = useState(null);
   const [email, setEmail] = useState('');
   const [geocaches, setGeocaches] = useState([]);
-
   const fetchGeocaches = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:3000/geocaches', {
+      const response = await axios.get('http://192.168.57.59:3000/geocaches', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setGeocaches(response.data);
