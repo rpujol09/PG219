@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Button, Alert } from 'react-native';
 import Auth from './components/Auth';
 import Map from './components/Map';
+import Form from './components/Form';
 import axios from 'axios';
 
 const App = () => {
@@ -11,7 +12,7 @@ const App = () => {
 
   const fetchGeocaches = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:3000/geocaches', {
+      const response = await axios.get('http://10.0.2.2:3000/geocaches', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setGeocaches(response.data);
@@ -26,6 +27,7 @@ const App = () => {
       {token ? (
         <>
           <Map geocaches={geocaches} />
+          <Form token={token} onGeocacheAdded={fetchGeocaches} />
           <Button title="Afficher les géocaches" onPress={fetchGeocaches} />
           <Button title="Se déconnecter" onPress={() => setToken(null)} />
         </>

@@ -19,20 +19,34 @@ const Map = ({ geocaches }) => {
       <title>Carte Leaflet</title>
       <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
       <style>
-        #map {
+        html, body {
           height: 100%;
           width: 100%;
           margin: 0;
           padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        body {
+        #map-container {
+          width: 70%;
+          aspect-ratio: 1;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        #map {
+          width: 100%;
+          aspect-ratio: 1;
           margin: 0;
           padding: 0;
         }
       </style>
     </head>
     <body>
+      <div id="map-container">
       <div id="map"></div>
+      </div>
       <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
       <script>
         // Initialisation de la carte

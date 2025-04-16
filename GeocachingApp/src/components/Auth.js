@@ -10,7 +10,7 @@ const Auth = ({ onLogin }) => {
 
   const login = async () => {
     //url en fonction de connexion ou inscription
-    const url = isLogin ? 'http://127.0.0.1:3000/login' : 'http://127.0.0.1:3000/register';
+    const url = isLogin ? 'http://10.0.2.2:3000/login' : 'http://10.0.2.2:3000/register';
     // les utilisiateurs doivent remplir tous les champs
     if (!email || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
