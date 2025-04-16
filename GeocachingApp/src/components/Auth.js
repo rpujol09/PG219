@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
 const Auth = ({ onLogin }) => {
@@ -50,38 +50,41 @@ const Auth = ({ onLogin }) => {
   };
 
   return (
-    //contenue de la page d'authentification (Inscription ou Connexion)
     <View style={styles.container}>
-      <Text style={styles.title}>Geocaching App</Text>    
-
+      <Text style={styles.title}>Geocaching App</Text>
       <Text style={styles.title}>{isLogin ? 'Connexion' : 'Inscription'}</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Mot de passe"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry= {!showPassword} // Afficher ou masquer le mot de passe
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Mot de passe"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword} // Basculer entre affichage et masquage
+        />
+        <TouchableOpacity
+          style={styles.toggleButton}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Text style={styles.toggleButtonText}>
+            {showPassword ? '👁️' : '🙈'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Button title={isLogin ? "Se connecter" : "S'inscrire"} onPress={login} />
       <Button
-        title={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-        onPress={() => setShowPassword(!showPassword)} // Changer la visibilité du mot de passe
-      />
-
-
-      
-      <Button title={isLogin ? "Se connecter" :"S'inscrire"} onPress={login} />
-      <Button 
         title={isLogin ? "Pas encore de compte ? Inscrivez-vous" : "Déjà un compte ? Connectez-vous"}
         onPress={() => setIsLogin(!isLogin)}
       />
-
     </View>
   );
 };
@@ -100,6 +103,27 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
+  },
+  passwordContainer: {
+    flexDirection: 'row', // Disposition en ligne
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  passwordInput: {
+    flex: 1, // Prend tout l'espace disponible
+    padding: 10,
+  },
+  toggleButton: {
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  toggleButtonText: {
+    fontSize: 16,
+    color: '#007bff',
   },
 });
 
