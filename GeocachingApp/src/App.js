@@ -9,7 +9,6 @@ const App = () => {
   const [token, setToken] = useState(null);
   const [email, setEmail] = useState('');
   const [geocaches, setGeocaches] = useState([]);
-
   const fetchGeocaches = async () => {
     try {
       const response = await axios.get('http://10.0.2.2:3000/geocaches', {
