@@ -11,7 +11,7 @@ const Auth = ({ onLogin }) => {
 
   const login = async () => {
     //url en fonction de connexion ou inscription
-    const url = isLogin ? 'http://192.168.57.59:3000/login' : 'http://192.168.57.59:3000/register';
+    const url = isLogin ? 'http://10.0.2.2:3000/login' : 'http://10.0.2.2:3000/register';
     // les utilisiateurs doivent remplir tous les champs
     if (!email || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
