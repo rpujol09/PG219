@@ -23,15 +23,16 @@ const Map = ({ geocaches }) => {
           height: 100%;
           width: 100%;
           margin: 0;
-          padding: 0;
+          padding: 12vh 2vw;
+          
           display: flex;
           align-items: center;
           justify-content: center;
         }
         #map-container {
-          width: 70%;
+          width: 100%;
           aspect-ratio: 1;
-          border-radius: 10px;
+          border-radius: 1em;
           overflow: hidden;
           box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
