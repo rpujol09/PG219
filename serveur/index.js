@@ -160,6 +160,18 @@ app.get("/geocaches/:id", async (req, res) => {
         res.status(500).json({ message: "Erreur de récupération du géocache" });
     }
 });
+
+// Récupérer les géocaches crées par l'utilisateur 
+app.get("/my-geocaches", authenticateToken, async (req, res) => {
+    console.log("req.user = ", req.user);
+    try {
+        const geocaches = await Geocache.find({ createdBy: req.user.id });
+        res.json(geocaches);
+    } catch (error) {
+        console.error("Erreur récupération géocaches créées par l'utilisateur :", error);
+        res.status(500).json({ message: "Erreur de récupération des géocaches créées par l'utilisateur" });
+    }
+});
   
 // 4. Mettre à jour un geocache (PATCH /geocaches/:id)
 // à améliorer : autoriser la mise à jour que si on l'a créé
@@ -191,6 +203,8 @@ app.delete("/geocaches/:id", async (req, res) => {
         res.status(500).json({ message: "Erreur de suppression du géocache" });
     }
 });
+
+
 
 // lance le serveur
 app.listen(3000, '0.0.0.0', () => {

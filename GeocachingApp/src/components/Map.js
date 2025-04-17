@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const Map = ({ geocaches }) => {
@@ -19,35 +19,16 @@ const Map = ({ geocaches }) => {
       <title>Carte Leaflet</title>
       <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
       <style>
-        html, body {
+        html, body, #map {
           height: 100%;
           width: 100%;
-          margin: 0;
-          padding: 12vh 2vw;
-          
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        #map-container {
-          width: 100%;
-          aspect-ratio: 1;
-          border-radius: 1em;
-          overflow: hidden;
-          box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }
-        #map {
-          width: 100%;
-          aspect-ratio: 1;
           margin: 0;
           padding: 0;
         }
       </style>
     </head>
     <body>
-      <div id="map-container">
       <div id="map"></div>
-      </div>
       <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
       <script>
         // Initialisation de la carte
@@ -62,7 +43,6 @@ const Map = ({ geocaches }) => {
     </body>
   </html>
 `;
-
   return (
     <View style={styles.container}>
       <WebView
