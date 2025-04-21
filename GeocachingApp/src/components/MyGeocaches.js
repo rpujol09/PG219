@@ -142,7 +142,7 @@ const MyGeocaches = ({ token, onNavigate}) => {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.title}>Mes géocaches 🗂️</Text>
-
+  
       <FlatList
         data={myGeocaches}
         keyExtractor={(item) => item._id || item.id?.toString()}
@@ -151,21 +151,38 @@ const MyGeocaches = ({ token, onNavigate}) => {
         ListEmptyComponent={<Text style={styles.empty}>Vous n'avez pas encore créé de géocache.</Text>}
         style={styles.list}
       />
-
-      {/* Formulaire de modification */}
-      {showEditForm && renderEditForm()}
-
-      {/* Bouton Fermer */}
+  
       <View style={styles.footer}>
         <TouchableOpacity style={styles.closeButton} onPress={onNavigate}>
           <Text style={styles.closeButtonText}>Fermer</Text>
         </TouchableOpacity>
       </View>
+  
+      {/* Formulaire superposé */}
+      {showEditForm && renderEditForm()}
     </View>
   );
-};
+};  
 
 const styles = StyleSheet.create({
+  
+  modalContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    padding: 10,
+    zIndex: 10,
+    elevation: 10, // pour Android
+  },
+
+
+  
+  
 
   container: {
     padding: 15,
@@ -180,10 +197,43 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
-    maxHeight: '80%', 
     justifyContent: 'center',
     paddingBottom: 40,
   },
+  
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  saveButton: {
+    backgroundColor: '#28a745',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  
+
+  saveButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    backgroundColor: '#dc3545',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+
   title: {
     fontSize: 20,
     fontWeight: 'bold',
