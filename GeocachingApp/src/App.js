@@ -6,6 +6,7 @@ import Form from './components/Form';
 import MyGeocaches from './components/MyGeocaches';
 import FloatingButtons from './components/FloatingButtons';
 import BottomBar from './components/BottomBar';
+import Profile from './components/Profile';
 import axios from 'axios';
 import { ScrollView } from 'react-native';
 
@@ -16,6 +17,9 @@ const App = () => {
   const [myGeocaches, setMyGeocaches] = useState([]);
   const [activeScreen, setActiveScreen] = useState('map');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showMyGeocaches, setShowMyGeocaches] = useState(false);
+
 
 
   const fetchGeocaches = async () => {
@@ -33,7 +37,7 @@ const App = () => {
 
   const fetchMyGeocaches = async() => {
     try {
-      const response = await axios.get("http://10.0.2.2:3000/my-geocaches", {
+      const response = await axios.get("http://10.0.2.2:3000/mygeocaches", {
         headers: { Authorization: token },
       });
       setMyGeocaches(response.data);
@@ -53,16 +57,42 @@ const App = () => {
     <View style={styles.container}>
       {token ? (
         <>
+          {/* Afficher la carte */}
           <Map geocaches={geocaches} />
+
+          {/* Afficher bouton flottants*/}
           <FloatingButtons onAddGeocache={() => setShowAddForm(true)} onNearby={fetchGeocaches} />
           <BottomBar 
-            onNavigate={setActiveScreen} 
+            onNavigate={(screen) => {
+              if (screen === 'profile') {
+                setShowProfile(true); // Ouvrir le modal du profil
+              } else if (screen === 'myGeocaches') {
+                setShowMyGeocaches(true);
+              }            
+              else {
+                setActiveScreen(screen);
+              }
+            }} 
             onLogout={logout} 
           />
-          {activeScreen === 'myGeocaches' && (
-            <MyGeocaches token={token} />
-          )}
+          {/* Afficher mes géocaches ou map */}
+          <Modal
+            visible={showMyGeocaches}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setShowMyGeocaches(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <MyGeocaches
+                  token={token}
+                  onNavigate={() => setShowMyGeocaches(false)} // Fermer le modal
+                />
+              </View>
+            </View>
+          </Modal>
 
+          
           {/* Afficher la carte ou le formulaire en fonction de l'écran actif */}
           <Modal
             visible={showAddForm}
@@ -78,6 +108,23 @@ const App = () => {
                     fetchGeocaches();
                     setShowAddForm(false);
                   }}
+                />
+              </View>
+            </View>
+          </Modal>
+
+            {/* Afficher le Profil */}
+          <Modal
+            visible={showProfile}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setShowProfile(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Profile 
+                  token={token} 
+                  onNavigate={() => setShowProfile(false)} // Fermer le modal
                 />
               </View>
             </View>

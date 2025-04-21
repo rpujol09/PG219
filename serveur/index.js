@@ -95,13 +95,17 @@ app.post("/login", async (req, res) => {
 //Verification du token
 function authenticateToken(req, res, next) {
     const token = req.headers["authorization"];
+  
     if (!token) {
+        console.log("Aucun token reçu");
         return res.sendStatus(401);
     }
     jwt.verify(token, "clé_secrète", (err, user) => {
         if (err) {
+            console.error("Erreur de vérification du token :", err);
             return res.sendStatus(403);
         }
+        console.log("Utilisateur authentifié :", user);
         req.user = user;
         next();
     });
@@ -162,7 +166,7 @@ app.get("/geocaches/:id", async (req, res) => {
 });
 
 // Récupérer les géocaches crées par l'utilisateur 
-app.get("/my-geocaches", authenticateToken, async (req, res) => {
+app.get("/mygeocaches", authenticateToken, async (req, res) => {
     console.log("req.user = ", req.user);
     try {
         const geocaches = await Geocache.find({ createdBy: req.user.id });
@@ -178,6 +182,14 @@ app.get("/my-geocaches", authenticateToken, async (req, res) => {
 
 app.patch("/geocaches/:id", authenticateToken, async (req, res) => {
     try {
+        const geocache = await Geocache.findById(req.params.id);
+        if (!geocache) return res.status(404).json({ message: "Géocache introuvable" });
+
+        // Vérifier si l'utilisateur  est le créateur du géocache
+        if (geocache.createdBy.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Action non autorisée" });
+        }
+        // Mettre à jour le géocache
         const updates = req.body ;
         const updated = await Geocache.findByIdAndUpdate(req.params.id, { $set: updates }, { new: true });
         if (!updated) return res.status(404).json({ error: "Non trouvé" });
@@ -190,20 +202,39 @@ app.patch("/geocaches/:id", authenticateToken, async (req, res) => {
 }) ;
 
 // 5. Supprimer un produit (DELETE /products/:id)
-// à améliorer : autoriser la suppression que si on l'a créé
 
-app.delete("/geocaches/:id", async (req, res) => {
+app.delete("/geocaches/:id", authenticateToken, async (req, res) => {
     try {
-        const deleted = await Geocache.findByIdAndDelete(req.params.id);
-        if (!deleted) return res.status(404).json({ error: "Non trouvé" });
+        const geocache = await Geocache.findById(req.params.id);
+        if (!geocache) return res.status(404).json({ error: "Géocache introuvable" });
+
+        if (geocache.createdBy.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Action non autorisée" });
+        }
+
+        await Geocache.deleteOne({ _id: req.params.id }); 
         res.json({ success: true });
-    }
-    catch (error) {
-        console.error("Erreur supression géocache :", error) ;
+    } catch (error) {
+        console.error("Erreur suppression géocache :", error);
         res.status(500).json({ message: "Erreur de suppression du géocache" });
     }
 });
 
+
+//Accèder au profils de l'utilisateur
+app.get("/profile", authenticateToken, async (req, res) => {
+    console.log("Utilisateur authentifié :", req.user);
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+        res.json({
+            email: user.email,
+        });
+    } catch (error) {
+        console.error("Erreur récupération profil :", error);
+        res.status(500).json({ message: "Erreur de récupération du profil" });
+    }
+});
 
 
 // lance le serveur

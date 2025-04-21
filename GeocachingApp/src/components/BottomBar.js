@@ -5,7 +5,7 @@ const BottomBar = ({ onNavigate, onLogout }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => onNavigate('myGeocaches')}>
-        <Text style={styles.button}>🧭{"\n"}Géocaches</Text>
+        <Text style={styles.button}>🧭{"\n"} Mes Géocaches</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onNavigate('stats')}>
         <Text style={styles.button}>📊{"\n"}Stats</Text>
