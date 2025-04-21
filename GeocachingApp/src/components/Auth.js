@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { SERVER_IP } from '../config'; 
 
 const Auth = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ const Auth = ({ onLogin }) => {
 
   const login = async () => {
     //url en fonction de connexion ou inscription
-    const url = isLogin ? 'http://10.0.2.2:3000/login' : 'http://10.0.2.2:3000/register';
+    const url = isLogin ? `${SERVER_IP}/login` : `${SERVER_IP}/register`;
     // les utilisiateurs doivent remplir tous les champs
     if (!email || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');

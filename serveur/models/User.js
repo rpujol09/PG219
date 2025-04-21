@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  foundGeocaches: [{ type: mongoose.Schema.Types.ObjectId, ref: "Geocache", default: [] }],
 });
 
 // Hash le mot de passe avant de sauvegarder

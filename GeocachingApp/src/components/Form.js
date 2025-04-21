@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import { PermissionsAndroid, Platform, View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import axios from 'axios';
+import { SERVER_IP } from '../config'; 
 
 const Form = ({token, onGeocacheAdded}) => {
     const [name, setName] = useState('');
@@ -27,7 +28,7 @@ const Form = ({token, onGeocacheAdded}) => {
         }
         try {
             // On vérifie s'il existe déjà un geocache aux mêmes coordonnées
-            const allGeocaches = await axios.get("http://10.0.2.2:3000/geocaches", {
+            const allGeocaches = await axios.get(`${SERVER_IP}/geocaches`, {
                 headers: {
                     Authorization: token
                 }
@@ -52,7 +53,7 @@ const Form = ({token, onGeocacheAdded}) => {
             };
 
             // Envoie du token dans l'entête HTTP pour s'autentifier
-            await axios.post('http://10.0.2.2:3000/geocaches', newGeocache, {
+            await axios.post(`${SERVER_IP}/geocaches`, newGeocache, {
                 headers: {
                     Authorization: token
                 }

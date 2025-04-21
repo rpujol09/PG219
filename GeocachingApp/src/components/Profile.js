@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { SERVER_IP } from '../config'; 
+
 
 const Profile = ({ token, onNavigate }) => {
   const [profile, setProfile] = useState(null);
@@ -20,7 +22,7 @@ const Profile = ({ token, onNavigate }) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://10.0.2.2:3000/profile', {
+        const response = await axios.get(`${SERVER_IP}/profile`, {
           headers: { Authorization: token },
         });
         setProfile(response.data);
