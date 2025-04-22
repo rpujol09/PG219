@@ -59,7 +59,7 @@ const Comments = ({token, onNavigate}) => {
                 onChangeText={setText}
             />
             <Button title="Envoyer" onPress={handleSend}  disabled={text.trim() === ''}/>
-            <Button title="Fermer" onPress={onNavigate} color="#888" style={{ marginTop: 10 }} />
+            <Button title="Fermer" onPress={onNavigate} color="#007AFF" style={{ marginTop: 10 }} />
         </View>
     );
 };

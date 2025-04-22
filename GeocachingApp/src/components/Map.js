@@ -188,7 +188,7 @@ const Map = ({ geocaches , myGeocaches, onMarkAsFound }) => {
           // Ajout des marqueurs
           ${filteredMarkers}
           // Ajouter un marqueur pour la position de l'utilisateur
-          L.marker([${userLocation.latitude}, ${userLocation.longitude}]).addTo(map).bindPopup("Vous êtes ici.");
+          L.marker([${userLocation.latitude}, ${userLocation.longitude}]).addTo(map).bindPopup("<span style='font-size: 28px; font-weight: bold;'>📍 Vous êtes ici</span>");
         } catch (error) {
           console.log("filteredMarkers ➡️", filteredMarkers);
           console.error("Erreur dans le script de la carte :", error);

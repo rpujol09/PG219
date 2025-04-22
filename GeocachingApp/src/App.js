@@ -172,7 +172,7 @@ const App = () => {
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Comments token={token} />
+                <Comments token={token} onNavigate={() => setShowComments(false)}/>
               </View>
             </View>
           </Modal>
