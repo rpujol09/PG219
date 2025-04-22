@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
 import { SERVER_IP } from '../config';
 
@@ -7,6 +7,7 @@ const Comments = ({token, onNavigate}) => {
     const [text, setText] = useState('');
     const [comments, setComments] = useState([]);
 
+    // Récupération des commentaires
     const fetchComments = async () => {
         try {
             const response = await axios.get(`${SERVER_IP}/comments`, {
@@ -18,6 +19,7 @@ const Comments = ({token, onNavigate}) => {
         }
     };
 
+    // Envoi d'un commentaire
     const handleSend = async () => {
         if (text.trim() === '') return;
 
@@ -34,6 +36,7 @@ const Comments = ({token, onNavigate}) => {
         }
     };
 
+    //
     useEffect(() => {
         fetchComments();
     }, []);
@@ -42,6 +45,7 @@ const Comments = ({token, onNavigate}) => {
         <View style={styles.container}>
             <Text style={styles.title}>💬 Commentaires</Text>
             <FlatList
+                style={styles.list}
                 data={comments}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
@@ -51,7 +55,10 @@ const Comments = ({token, onNavigate}) => {
                         <Text style={styles.date}>{new Date(item.createdAt).toLocaleString()}</Text>
                     </View>
                 )}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                ListEmptyComponent={<Text style={styles.empty}>Aucun commentaire pour le moment.</Text>}
             />
+            <View style={styles.footer}>
             <TextInput
                 style={styles.input}
                 placeholder="Écrire un commentaire..."
@@ -60,17 +67,34 @@ const Comments = ({token, onNavigate}) => {
             />
             <Button title="Envoyer" onPress={handleSend}  disabled={text.trim() === ''}/>
             <Button title="Fermer" onPress={onNavigate} color="#007AFF" style={{ marginTop: 10 }} />
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { padding: 20 },
+    container: {flex:1, padding: 20 },
     title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
     comment: { marginBottom: 15, padding: 10, backgroundColor: '#f0f0f0', borderRadius: 8 },
     author: { fontWeight: 'bold' },
     date: { fontSize: 12, color: 'gray' },
-    input: { borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 8, marginBottom: 10 }
+    input: { borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 8, marginBottom: 10 },
+    list: {flex: 1, marginBottom: 20,},
+    empty: {
+        fontStyle: 'italic',
+        textAlign: 'center',
+        color: '#999',
+        marginTop: 20,
+      },
+
+      footer: {
+        borderTopWidth: 1,
+        borderTopColor: '#ccc',
+        paddingTop: 10,
+        paddingBottom: 140,
+        backgroundColor: '#fff',
+      },
+      
   });
   
   export default Comments;
