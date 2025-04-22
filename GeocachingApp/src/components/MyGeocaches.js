@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import axios from 'axios';
+import { SERVER_IP } from '../config'; 
 
 const MyGeocaches = ({ token, onNavigate}) => {
   const [myGeocaches, setMyGeocaches] = useState([]);
@@ -12,7 +13,7 @@ const MyGeocaches = ({ token, onNavigate}) => {
   // Récupérer les géocaches créées par l'utilisateur
   const fetchMyGeocaches = async () => {
     try {
-      const response = await axios.get('http://10.0.2.2:3000/mygeocaches', {
+      const response = await axios.get(`${SERVER_IP}/mygeocaches`, {
         headers: { Authorization: token },
       });
       console.log("Geocaches récupérés :", response.data); // Vérification si le geocache à un  _id
@@ -39,7 +40,7 @@ const MyGeocaches = ({ token, onNavigate}) => {
   const handleUpdateChanges = async () => {
     try {
       const response = await axios.patch(
-        `http://10.0.2.2:3000/geocaches/${selectedGeocache._id}`,
+        `${SERVER_IP}/geocaches/${selectedGeocache._id}`,
         selectedGeocache,
         { headers: { Authorization: token } }
       );
@@ -56,7 +57,7 @@ const MyGeocaches = ({ token, onNavigate}) => {
   //fonction de suppression de géocache
   const handleDeleteGeocache = async (id) => {
     try {
-      await axios.delete(`http://10.0.2.2:3000/geocaches/${id}`, {
+      await axios.delete(`${SERVER_IP}/geocaches/${id}`, {
         headers: { Authorization: token },
       });
       Alert.alert('Succès', 'Géocache supprimée avec succès');

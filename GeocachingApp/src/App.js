@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Button, Alert, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import Auth from './components/Auth';
 import Map from './components/Map';
@@ -9,6 +9,8 @@ import BottomBar from './components/BottomBar';
 import Profile from './components/Profile';
 import axios from 'axios';
 import { ScrollView } from 'react-native';
+import { SERVER_IP } from './config'; // depuis src/
+
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -24,8 +26,8 @@ const App = () => {
 
   const fetchGeocaches = async () => {
     try {
-      const response = await axios.get('http://10.0.2.2:3000/geocaches', {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.get(`${SERVER_IP}/geocaches`, {
+        headers: { Authorization: token },
       });
 
       setGeocaches(response.data);
@@ -37,7 +39,7 @@ const App = () => {
 
   const fetchMyGeocaches = async() => {
     try {
-      const response = await axios.get("http://10.0.2.2:3000/mygeocaches", {
+      const response = await axios.get(`${SERVER_IP}/mygeocaches`, {
         headers: { Authorization: token },
       });
       setMyGeocaches(response.data);
@@ -53,12 +55,33 @@ const App = () => {
     setEmail('');
   };
 
+  useEffect(() => {
+    if (token) {
+      fetchGeocaches();
+      fetchMyGeocaches();
+    }
+  }, [token]);
+
   return (
     <View style={styles.container}>
       {token ? (
         <>
           {/* Afficher la carte */}
-          <Map geocaches={geocaches} />
+          <Map geocaches={geocaches} myGeocaches={myGeocaches}
+          onMarkAsFound={async (id) => {
+            try {
+              await axios.post(`${SERVER_IP}/geocaches/${id}/found`, {}, {
+                headers: { Authorization: token }
+              });
+              // Recharge les données après le changement
+              await fetchGeocaches();
+              await fetchMyGeocaches();
+            } catch (err) {
+              console.error("Erreur lors du marquage :", err);
+              Alert.alert("Erreur", "Impossible de marquer le géocache comme trouvé");
+            }
+          }}
+          />
 
           {/* Afficher bouton flottants*/}
           <FloatingButtons onAddGeocache={() => setShowAddForm(true)} onNearby={fetchGeocaches} />
@@ -106,6 +129,7 @@ const App = () => {
                   token={token} 
                   onGeocacheAdded={() => {
                     fetchGeocaches();
+                    fetchMyGeocaches();
                     setShowAddForm(false);
                   }}
                 />

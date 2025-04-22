@@ -116,8 +116,7 @@ app.get("/", (req, res) => {
     res.send("Bienvenue sur le serveur Geocaching !");
 });
 
-// 1. Ajouter un géocache 
-// à améliorer : ajouter un commentaire pour le cache ajouté qui s'affichera quand il sera trouvé et un commentaire pour aider à le trouver
+// Ajouter un géocache 
 app.post("/geocaches", authenticateToken, async (req, res) => {
     try {
         const { name, latitude, longitude, description } = req.body ;
@@ -138,12 +137,21 @@ app.post("/geocaches", authenticateToken, async (req, res) => {
     }
 }) ;
 
-// 2. Récupérer tous les géocaches (GET /geocaches)
-// à améliorer : ajouter un filtre par localisation et distance
-app.get("/geocaches", async (req, res) => {
+// Récupérer tous les géocaches (GET /geocaches)
+app.get("/geocaches", authenticateToken, async (req, res) => {
     try {
         const geocaches = await Geocache.find();
-        res.json(geocaches) ;
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+        // Vérifier si l'utilisateur a trouvé des géocaches
+        const result = geocaches.map((geocache) => {
+            const isFound = user.foundGeocaches.includes(geocache._id.toString());
+            return {
+                ...geocache.toObject(),
+                found: isFound,
+            };
+        });
+        res.json(result);   
     }
     catch (error) {
         console.error("Erreur récupération géocaches :", error) ;
@@ -152,7 +160,7 @@ app.get("/geocaches", async (req, res) => {
 });
 
 
-// 3. Récupérer un geocache par ID (GET /geocaches/:id)
+// Récupérer un geocache par ID (GET /geocaches/:id)
 app.get("/geocaches/:id", async (req, res) => {
     try {
         const geocache = await Geocache.findById(req.params.id);
@@ -177,9 +185,7 @@ app.get("/mygeocaches", authenticateToken, async (req, res) => {
     }
 });
   
-// 4. Mettre à jour un geocache (PATCH /geocaches/:id)
-// à améliorer : autoriser la mise à jour que si on l'a créé
-
+// Mettre à jour un geocache (PATCH /geocaches/:id)
 app.patch("/geocaches/:id", authenticateToken, async (req, res) => {
     try {
         const geocache = await Geocache.findById(req.params.id);
@@ -201,8 +207,7 @@ app.patch("/geocaches/:id", authenticateToken, async (req, res) => {
     }
 }) ;
 
-// 5. Supprimer un produit (DELETE /products/:id)
-
+// Supprimer un geocache (DELETE /geocaches/:id)
 app.delete("/geocaches/:id", authenticateToken, async (req, res) => {
     try {
         const geocache = await Geocache.findById(req.params.id);
@@ -221,7 +226,7 @@ app.delete("/geocaches/:id", authenticateToken, async (req, res) => {
 });
 
 
-//Accèder au profils de l'utilisateur
+// Accèder au profils de l'utilisateur
 app.get("/profile", authenticateToken, async (req, res) => {
     console.log("Utilisateur authentifié :", req.user);
     try {
@@ -236,8 +241,42 @@ app.get("/profile", authenticateToken, async (req, res) => {
     }
 });
 
+// Accéder aux géocaches trouvés par l'utilisateur
+app.post("/geocaches/:id/found", authenticateToken, async (req, res) => {
+    try {
+        const geocacheID = req.params.id;
+        const user = await User.findById(req.user.id);
 
-// lance le serveur
+        const geocache = await Geocache.findById(geocacheID);
+        if (!geocache) {
+            return res.status(404).json({ message: "Géocache introuvable" });
+        }
+
+        console.log("🧠 User trouvé :", user.email);
+        console.log("🧭 Geocache trouvé :", geocache.name);
+        console.log("💾 foundGeocaches before:", user.foundGeocaches);
+
+        if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+
+        console.log("💾 user.foundGeocaches:", user.foundGeocaches);
+
+        
+        // Vérifier si le géocache a déjà été trouvé
+        if (user.foundGeocaches.some(id => id.toString() === geocacheID)) {
+            return res.status(400).json({ message: "Géocache déjà trouvé" });
+        }
+
+        user.foundGeocaches.push(geocacheID);
+        await user.save();
+
+        res.status(200).json({ message: "Géocache marqué comme trouvé" });
+    } catch (error) {
+        console.error("Erreur marquage géocache trouvée :", error.stack || error);
+        res.status(500).json({ message: "Erreur lors du marquage de la géocache" });
+    }
+});
+
+// Lance le serveur
 app.listen(3000, '0.0.0.0', () => {
     console.log("En attente de requêtes...");
 });
