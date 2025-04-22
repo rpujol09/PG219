@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const cors = require("cors")
 const app = express()
+const Comment = require("./models/Comment")
 
 
 //Utilisation du middlewre 
@@ -287,6 +288,40 @@ app.get("/stats", authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Erreur de récupération des statistiques" });
     }
 })
+
+// Récupérer tous les commentaires
+app.get("/comments", authenticateToken, async (req, res) => {
+    try {
+        const comments = await Comment.find().populate("author", "email").sort({ createdAt: -1 });
+        res.json(comments);
+    } catch (error) {
+        console.error("Erreur récupération commentaires :", error);
+        res.status(500).json({ message: "Erreur de récupération des commentaires" });
+    }
+});
+
+// Ajouter un commentaire
+app.post("/comments", authenticateToken, async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) return res.status(400).json({ message: "Contenu du commentaire manquant" });
+
+        const comment = new Comment({
+            author: req.user.id,
+            text,
+        });
+
+        await comment.save();
+
+        // Remplacer l'id par le nom d'utilisateur
+        const populated = await comment.populate("author", "email");
+        res.status(201).json(populated);
+    }
+    catch (error) {
+        console.error("Erreur ajout commentaire :", error);
+        res.status(500).json({ message: "Erreur lors de l'ajout du commentaire" });
+    }
+});
 
 // Lance le serveur
 app.listen(3000, '0.0.0.0', () => {
