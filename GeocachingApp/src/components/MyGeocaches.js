@@ -94,7 +94,7 @@ const MyGeocaches = ({ token, onNavigate}) => {
   const renderEditForm = () => (
     <View style={styles.modalContainer}>
       <ScrollView contentContainerStyle={styles.form}>
-        <Text style={styles.modalTitle}>Modifier la géocache</Text>
+        <Text style={styles.title}>Modifier la géocache </Text>
         <TextInput
           style={styles.input}
           value={selectedGeocache?.name}
@@ -147,7 +147,8 @@ const MyGeocaches = ({ token, onNavigate}) => {
         data={myGeocaches}
         keyExtractor={(item) => item._id || item.id?.toString()}
         renderItem={renderGeocache}
-        contentContainerStyle={myGeocaches.length === 0 && styles.emptyListContainer}
+        contentContainerStyle= {{ paddingBottom: 100, 
+          ... (myGeocaches.length === 0 && styles.emptyListContainer) }}
         ListEmptyComponent={<Text style={styles.empty}>Vous n'avez pas encore créé de géocache.</Text>}
         style={styles.list}
       />
@@ -173,16 +174,12 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor:  'rgba(0, 0, 0, 0)',
     alignItems: 'center',
     padding: 10,
     zIndex: 10,
     elevation: 10, // pour Android
   },
-
-
-  
-  
 
   container: {
     padding: 15,
@@ -192,13 +189,18 @@ const styles = StyleSheet.create({
   },
   
   form: {
-    flexGrow: 1,
     width: '90%',
+    maxHeight: '85%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
-    justifyContent: 'center',
+    shadowColor: '#000',
     paddingBottom: 40,
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   
 
@@ -260,7 +262,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#fff',
-    paddingVertical: 10,
+    paddingVertical: 15,
     borderTopWidth: 1,
     borderColor: '#ccc',
     alignItems: 'center',
@@ -273,10 +275,11 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     backgroundColor: '#007bff',
-    paddingVertical: 10,
+    paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginBottom: 10,
+    marginBottom: 29,
+    alignItems: 'center'
   },
   closeButtonText: {
     color: '#fff',
