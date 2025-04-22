@@ -11,7 +11,7 @@ const BottomBar = ({ onNavigate, onLogout }) => {
         <Text style={styles.button}>📊{"\n"}Stats</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onNavigate('tuto')}>
-        <Text style={styles.button}>📖{"\n"}Tuto</Text>
+        <Text style={styles.button}>💬{"\n"}Commentaires</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onNavigate('profile')}>
         <Text style={styles.button}>👤{"\n"}Profil</Text>

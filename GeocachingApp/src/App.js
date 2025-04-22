@@ -7,9 +7,11 @@ import MyGeocaches from './components/MyGeocaches';
 import FloatingButtons from './components/FloatingButtons';
 import BottomBar from './components/BottomBar';
 import Profile from './components/Profile';
+import Comments from './components/Comments';
 import axios from 'axios';
 import { ScrollView } from 'react-native';
 import { SERVER_IP } from './config'; // depuis src/
+
 
 
 const App = () => {
@@ -21,6 +23,7 @@ const App = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showMyGeocaches, setShowMyGeocaches] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
 
 
@@ -91,6 +94,8 @@ const App = () => {
                 setShowProfile(true); // Ouvrir le modal du profil
               } else if (screen === 'myGeocaches') {
                 setShowMyGeocaches(true);
+              } else if (screen === 'comments') {
+                setShowComments(true);
               }            
               else {
                 setActiveScreen(screen);
@@ -150,6 +155,20 @@ const App = () => {
                   token={token} 
                   onNavigate={() => setShowProfile(false)} // Fermer le modal
                 />
+              </View>
+            </View>
+          </Modal>
+
+          {/* Afficher les commentaires */}
+          <Modal
+            visible={showComments}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setShowComments(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Comments token={token} />
               </View>
             </View>
           </Modal>

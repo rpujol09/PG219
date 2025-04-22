@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const cors = require("cors")
 const app = express()
+const Comment = require("./models/Comment")
 
 
 //Utilisation du middlewre 
@@ -251,15 +252,7 @@ app.post("/geocaches/:id/found", authenticateToken, async (req, res) => {
         if (!geocache) {
             return res.status(404).json({ message: "Géocache introuvable" });
         }
-
-        console.log("🧠 User trouvé :", user.email);
-        console.log("🧭 Geocache trouvé :", geocache.name);
-        console.log("💾 foundGeocaches before:", user.foundGeocaches);
-
         if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
-
-        console.log("💾 user.foundGeocaches:", user.foundGeocaches);
-
         
         // Vérifier si le géocache a déjà été trouvé
         if (user.foundGeocaches.some(id => id.toString() === geocacheID)) {
@@ -273,6 +266,60 @@ app.post("/geocaches/:id/found", authenticateToken, async (req, res) => {
     } catch (error) {
         console.error("Erreur marquage géocache trouvée :", error.stack || error);
         res.status(500).json({ message: "Erreur lors du marquage de la géocache" });
+    }
+});
+
+// Récupérer les statistiques de l'utilisateur
+app.get("/stats", authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+
+        const totalFound = user.foundGeocaches.length;
+        const totalCreated = await Geocache.countDocuments({ createdBy: req.user.id });
+
+        res.json({
+            found: totalFound,
+            created: totalCreated
+        });
+    }
+    catch (error) {
+        console.error("Erreur récupération statistiques :", error);
+        res.status(500).json({ message: "Erreur de récupération des statistiques" });
+    }
+})
+
+// Récupérer tous les commentaires
+app.get("/comments", authenticateToken, async (req, res) => {
+    try {
+        const comments = await Comment.find().populate("author", "email").sort({ createdAt: -1 });
+        res.json(comments);
+    } catch (error) {
+        console.error("Erreur récupération commentaires :", error);
+        res.status(500).json({ message: "Erreur de récupération des commentaires" });
+    }
+});
+
+// Ajouter un commentaire
+app.post("/comments", authenticateToken, async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) return res.status(400).json({ message: "Contenu du commentaire manquant" });
+
+        const comment = new Comment({
+            author: req.user.id,
+            text,
+        });
+
+        await comment.save();
+
+        // Remplacer l'id par le nom d'utilisateur
+        const populated = await comment.populate("author", "email");
+        res.status(201).json(populated);
+    }
+    catch (error) {
+        console.error("Erreur ajout commentaire :", error);
+        res.status(500).json({ message: "Erreur lors de l'ajout du commentaire" });
     }
 });
 
