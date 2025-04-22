@@ -55,7 +55,9 @@ const Comments = ({token, onNavigate}) => {
                         <Text style={styles.date}>{new Date(item.createdAt).toLocaleString()}</Text>
                     </View>
                 )}
-                contentContainerStyle={{ paddingBottom: 100 }}
+                contentContainerStyle={comments.length === 0 
+                    ? { flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 100 }
+                    : { paddingBottom: 100 }}
                 ListEmptyComponent={<Text style={styles.empty}>Aucun commentaire pour le moment.</Text>}
             />
             <View style={styles.footer}>
@@ -73,13 +75,16 @@ const Comments = ({token, onNavigate}) => {
 };
 
 const styles = StyleSheet.create({
-    container: {flex:1, padding: 20 },
+    container: {maxHeight: '85%',
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: 10,padding: 20 },
     title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
     comment: { marginBottom: 15, padding: 10, backgroundColor: '#f0f0f0', borderRadius: 8 },
     author: { fontWeight: 'bold' },
     date: { fontSize: 12, color: 'gray' },
     input: { borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 8, marginBottom: 10 },
-    list: {flex: 1, marginBottom: 20,},
+    list: {marginBottom: 20,},
     empty: {
         fontStyle: 'italic',
         textAlign: 'center',
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#ccc',
         paddingTop: 10,
-        paddingBottom: 140,
+        paddingBottom: 0,
         backgroundColor: '#fff',
       },
       
