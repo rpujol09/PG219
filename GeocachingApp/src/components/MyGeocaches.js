@@ -141,29 +141,32 @@ const MyGeocaches = ({ token, onNavigate}) => {
   }
   
   return (
-    <View style={styles.wrapper}>
-      <Text style={styles.title}>Mes géocaches 🗂️</Text>
-  
-      <FlatList
-        data={myGeocaches}
-        keyExtractor={(item) => item._id || item.id?.toString()}
-        renderItem={renderGeocache}
-        contentContainerStyle= {{ paddingBottom: 100, 
-          ... (myGeocaches.length === 0 && styles.emptyListContainer) }}
-        ListEmptyComponent={<Text style={styles.empty}>Vous n'avez pas encore créé de géocache.</Text>}
-        style={styles.list}
-      />
-  
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.closeButton} onPress={onNavigate}>
-          <Text style={styles.closeButtonText}>Fermer</Text>
-        </TouchableOpacity>
-      </View>
-  
-      {/* Formulaire superposé */}
-      {showEditForm && renderEditForm()}
+  <View style={styles.wrapper}>
+    <Text style={styles.title}>Mes géocaches 🗂️</Text>
+
+    <FlatList
+      data={myGeocaches}
+      keyExtractor={(item) => item._id || item.id?.toString()}
+      renderItem={renderGeocache}
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: myGeocaches.length === 0 ? 'center' : 'flex-start',
+        paddingBottom: 100,
+      }}
+      ListEmptyComponent={<Text style={styles.empty}>Vous n'avez pas encore créé de géocache.</Text>}
+      style={styles.list}
+    />
+
+    <View style={styles.footer}>
+      <TouchableOpacity style={styles.closeButton} onPress={onNavigate}>
+        <Text style={styles.closeButtonText}>Fermer</Text>
+      </TouchableOpacity>
     </View>
-  );
+
+    {/* Formulaire superposé */}
+    {showEditForm && renderEditForm()}
+  </View>
+);
 };  
 
 const styles = StyleSheet.create({
@@ -178,8 +181,9 @@ const styles = StyleSheet.create({
     backgroundColor:  'rgba(0, 0, 0, 0)',
     alignItems: 'center',
     padding: 10,
-    zIndex: 10,
+    zIndex: 30,
     elevation: 10, // pour Android
+    flex: 1,
   },
 
   container: {
@@ -191,7 +195,7 @@ const styles = StyleSheet.create({
   
   form: {
     width: '90%',
-    maxHeight: '85%',
+    minHeight: '70%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
@@ -201,7 +205,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   
 
@@ -244,7 +248,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   listContent: {
-    paddingBottom: 80, // Ajoute un espace pour éviter que le bouton chevauche la liste
+    paddingBottom: 80, 
   },
   cacheItem: {
     backgroundColor: '#f0f0f0',
@@ -271,8 +275,12 @@ const styles = StyleSheet.create({
   empty: {
     textAlign: 'center',
     marginTop: 20,
+    fontSize: 16,
     fontStyle: 'italic',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
     color: '#888',
+
   },
   closeButton: {
     backgroundColor: '#007bff',
