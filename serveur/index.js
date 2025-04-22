@@ -245,13 +245,24 @@ app.get("/profile", authenticateToken, async (req, res) => {
 app.post("/geocaches/:id/found", authenticateToken, async (req, res) => {
     try {
         const geocacheID = req.params.id;
-        if (!geocache) return res.status(404).json({ message: "Géocache introuvable" });
         const user = await User.findById(req.user.id);
 
+        const geocache = await Geocache.findById(geocacheID);
+        if (!geocache) {
+            return res.status(404).json({ message: "Géocache introuvable" });
+        }
+
+        console.log("🧠 User trouvé :", user.email);
+        console.log("🧭 Geocache trouvé :", geocache.name);
+        console.log("💾 foundGeocaches before:", user.foundGeocaches);
+
         if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+
+        console.log("💾 user.foundGeocaches:", user.foundGeocaches);
+
         
         // Vérifier si le géocache a déjà été trouvé
-        if (user.foundGeocaches.includes(geocacheID)) {
+        if (user.foundGeocaches.some(id => id.toString() === geocacheID)) {
             return res.status(400).json({ message: "Géocache déjà trouvé" });
         }
 
@@ -260,7 +271,7 @@ app.post("/geocaches/:id/found", authenticateToken, async (req, res) => {
 
         res.status(200).json({ message: "Géocache marqué comme trouvé" });
     } catch (error) {
-        console.error("Erreur marquage géocache trouvée :", error);
+        console.error("Erreur marquage géocache trouvée :", error.stack || error);
         res.status(500).json({ message: "Erreur lors du marquage de la géocache" });
     }
 });
