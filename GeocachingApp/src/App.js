@@ -8,6 +8,7 @@ import FloatingButtons from './components/FloatingButtons';
 import BottomBar from './components/BottomBar';
 import Profile from './components/Profile';
 import Comments from './components/Comments';
+import Stats from './components/Stats';
 import axios from 'axios';
 import { ScrollView } from 'react-native';
 import { SERVER_IP } from './config'; // depuis src/
@@ -24,6 +25,7 @@ const App = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showMyGeocaches, setShowMyGeocaches] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [showStats, setShowStats] = useState(false);
 
 
 
@@ -96,7 +98,9 @@ const App = () => {
                 setShowMyGeocaches(true);
               } else if (screen === 'comments') {
                 setShowComments(true);
-              }            
+              } else if (screen === 'stats') {     
+                setShowStats(true);
+              }    
               else {
                 setActiveScreen(screen);
               }
@@ -169,6 +173,20 @@ const App = () => {
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
                 <Comments token={token} />
+              </View>
+            </View>
+          </Modal>
+
+          {/* Afficher les stats */}
+          <Modal
+            visible={showStats}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setShowStats(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                  <Stats token={token} onNavigate={() => setShowStats(false)} />
               </View>
             </View>
           </Modal>
