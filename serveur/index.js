@@ -251,15 +251,7 @@ app.post("/geocaches/:id/found", authenticateToken, async (req, res) => {
         if (!geocache) {
             return res.status(404).json({ message: "Géocache introuvable" });
         }
-
-        console.log("🧠 User trouvé :", user.email);
-        console.log("🧭 Geocache trouvé :", geocache.name);
-        console.log("💾 foundGeocaches before:", user.foundGeocaches);
-
         if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
-
-        console.log("💾 user.foundGeocaches:", user.foundGeocaches);
-
         
         // Vérifier si le géocache a déjà été trouvé
         if (user.foundGeocaches.some(id => id.toString() === geocacheID)) {
@@ -275,6 +267,26 @@ app.post("/geocaches/:id/found", authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Erreur lors du marquage de la géocache" });
     }
 });
+
+// Récupérer les statistiques de l'utilisateur
+app.get("/stats", authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+
+        const totalFound = user.foundGeocaches.length;
+        const totalCreated = await Geocache.countDocuments({ createdBy: req.user.id });
+
+        res.json({
+            found: totalFound,
+            created: totalCreated
+        });
+    }
+    catch (error) {
+        console.error("Erreur récupération statistiques :", error);
+        res.status(500).json({ message: "Erreur de récupération des statistiques" });
+    }
+})
 
 // Lance le serveur
 app.listen(3000, '0.0.0.0', () => {

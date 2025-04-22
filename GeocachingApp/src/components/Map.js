@@ -114,7 +114,7 @@ const Map = ({ geocaches , myGeocaches, onMarkAsFound }) => {
       const iconUrl = {
         red: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-red.png",
         green: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-green.png",
-        blue: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png",
+        blue: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png",
       }[color];  
       
       console.log(`marker ${geocache.name}: color=${color}, iconUrl=${iconUrl}`);
@@ -137,9 +137,19 @@ const Map = ({ geocaches , myGeocaches, onMarkAsFound }) => {
         }).addTo(map);
 
         marker${geocache._id}.bindPopup(\`
-          <strong>${safeName}</strong><br>
-          ${safeDescription}<br>
-          ${showFoundButton ? `<button onclick="markAsFound('${geocache._id}')">✅ Trouvé</button>` : ""}
+          <div style="font-size: 20px; line-height: 1.8;">
+          <strong style="font-size: 28px;">${safeName}</strong><br>
+          <span style="font-size: 24px;">${safeDescription}</span><br>
+          ${showFoundButton ? `<button style="margin-top: 12px;
+      font-size: 24px;
+      padding: 18px 28px;
+      border-radius: 10px;
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      cursor: pointer;"
+      onclick="markAsFound('${geocache._id}')">✅ Trouvé</button>` : ""}
+          </div>
         \`);
       `;
     })
